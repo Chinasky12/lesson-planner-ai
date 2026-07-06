@@ -2,14 +2,22 @@ import streamlit as st
 import pandas as pd
 from google import genai
 
+# Gemini client
+client = genai.Client(
+    api_key="AQ.Ab8RN6Ibz1DYLhONbSoSK2-CJ6jWonDqO73RFiI1CSGVQdRB_Q"
+)
+
 st.title("Lesson Planner")
 
+# Load database
 database = pd.read_excel(
     "database.xlsx",
     sheet_name=None
 )
 
 levels = list(database.keys())
+
+# Number of classes
 num_classes = st.number_input(
     "How many classes do you want to include?",
     min_value=1,
@@ -17,8 +25,10 @@ num_classes = st.number_input(
     value=1,
     step=1
 )
+
 selected_lessons = []
 
+# ---------- LESSON SELECTION ----------
 for i in range(num_classes):
 
     st.subheader(f"Class {i+1}")
@@ -51,9 +61,11 @@ for i in range(num_classes):
     selected_lessons.append(selected)
 
     st.divider()
+
+
+# ---------- GENERATE LESSON PLAN ----------
 if st.button("Generate Lesson Plan"):
 
-    prompt = ""
     prompt = """
 You are an experienced ESL teacher.
 
@@ -83,6 +95,7 @@ Here is the curriculum information:
     for i, lesson in enumerate(selected_lessons):
 
         prompt += f"""
+
 CLASS {i+1}
 
 LEVEL: {lesson['NIVEL']}
@@ -105,19 +118,13 @@ COMMUNICATIVE FUNCTIONS:
 
 """
 
-    st.code(prompt, language=None)
-from google import genai
-import streamlit as st
+    with st.spinner("Generating lesson plan..."):
 
-client = genai.Client(
-    api_key=st.secrets["GEMINI_API_KEY"]
-)
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
 
-response = client.models.generate_content(
-    model="gemini-2.5-flash",
-    contents=prompt
-)
+    st.success("Lesson Plan Generated!")
 
-lesson = response.text
-
-st.write(lesson)
+    st.markdown(response.text)
