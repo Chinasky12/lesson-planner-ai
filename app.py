@@ -9,9 +9,16 @@ database = pd.read_excel(
 )
 
 levels = list(database.keys())
-
+num_classes = st.number_input(
+    "How many classes do you want to include?",
+    min_value=1,
+    max_value=10,
+    value=1,
+    step=1
+)
 selected_lessons = []
-for i in range(10):
+
+for i in range(num_classes):
 
     st.subheader(f"Class {i+1}")
 
