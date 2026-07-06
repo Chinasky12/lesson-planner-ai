@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from google import genai
 
 st.title("Lesson Planner")
 
@@ -105,3 +106,18 @@ COMMUNICATIVE FUNCTIONS:
 """
 
     st.code(prompt, language=None)
+from google import genai
+import streamlit as st
+
+client = genai.Client(
+    api_key=st.secrets["GEMINI_API_KEY"]
+)
+
+response = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents=prompt
+)
+
+lesson = response.text
+
+st.write(lesson)
