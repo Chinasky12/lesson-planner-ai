@@ -2,9 +2,8 @@ import streamlit as st
 import pandas as pd
 from google import genai
 
-# Gemini client
 client = genai.Client(
-    api_key="AQ.Ab8RN6Ibz1DYLhONbSoSK2-CJ6jWonDqO73RFiI1CSGVQdRB_Q"
+    api_key=st.secrets["GEMINI_API_KEY"]
 )
 
 st.title("Lesson Planner")
